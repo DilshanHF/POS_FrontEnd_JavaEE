@@ -2,7 +2,58 @@ import {ItemModel  } from "../model/itemModel.js";
 
 
 
+initialize()
 
+function initialize(){
+    $.ajax({
+        url: "http://localhost:8080/api/v1/items/nextId",
+        type: "GET",
+        success: (res) => {
+            $('#itemCode').val(res);
+        },
+        error: (res) => {
+            console.error(res);
+        }
+    });
+
+    setTimeout(() => {
+        loadItemTable();
+    },1000)
+}
+
+export function loadItemTable() {
+    $('#item_table').empty();
+
+    let itemArray = [];
+
+    $.ajax({
+        url: "http://localhost:8080/api/v1/items",
+        type: "GET",
+        success: (res) => {
+            itemArray = res;
+
+            setItemIds(itemArray);
+
+            itemArray.map((item, index) => {
+
+                var record = `<tr>
+                    <td class="itm-id-val">${item.id}</td>
+                    <td class="itm-desc-val">${item.description}</td>
+                    <td class="itm-unitPrice-val">${item.unitPrice}</td>
+                    <td class="itm-qty-val">${item.qty}</td>
+                </tr>`;
+
+                $('#item_table').append(record);
+            });
+
+            $("#item_count").text(itemArray.length);
+        },
+        error: (res) => {
+            console.error(res);
+        }
+    });
+
+}
 
 
 //item save
@@ -56,9 +107,18 @@ $("#itemSave").on("click", function(){
         });
 
     }
+});
 
+$('#item_table').on('click','tr', function () {
+    let id = $(this).find('.itm-id-val').text();
+    let desc = $(this).find('.itm-desc-val').text();
+    let unit_price = $(this).find('.itm-unitPrice-val').text();
+    let qty = $(this).find('.itm-qty-val').text();
 
-
+    $('#itemCode').val(id);
+    $('#description').val(desc);
+    $('#unitPrice').val(unit_price);
+    $('#qty').val(qty);
 });
 
 
