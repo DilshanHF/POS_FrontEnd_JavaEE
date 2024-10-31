@@ -121,6 +121,87 @@ $('#item_table').on('click','tr', function () {
     $('#qty').val(qty);
 });
 
+$(`#itemUpdate`).on(`click`, () => {
+
+    if ($('#description').val() == '' || $('#unitPrice').val() == '' || $('#qty').val() == '') {
+        Swal.fire({
+            title: "Please fill all the fields",
+            icon: "warning"
+        });
+    } else if (!pricePattern.test($('#unitPrice').val())) {
+        Swal.fire({
+            title: "Please enter a valid price",
+            icon: "warning"
+        });
+    } else {
+        var id = $('#itemCode').val();
+        var description = $('#description').val();
+        var unitPrice = $('#unitPrice').val();
+        var qty = $('#qty').val();
+
+        let item = new ItemModel(id,description,unitPrice,qty);
+        let jsonItem = JSON.stringify(item);
+
+
+        $.ajax({
+            url: "http://localhost:8080/api/v1/items/"+id,
+            type: "PUT",
+            data: jsonItem,
+            headers: { "Content-Type": "application/json" },
+            success: (res) => {
+                Swal.fire({
+                    icon: "success"
+                });
+            },
+            error: (res) => {
+                console.error(res);
+                Swal.fire({
+                    title: JSON.stringify(res),
+                    icon: "error"
+                });
+            }
+        });
+
+        $('#itemReset').click();
+
+        setTimeout(() => {
+            initialize()
+        },1000)
+    }
+
+})
+
+$('#itemDelete').on('click',  () => {
+    var id = $('#itemCode').val();
+
+    $.ajax({
+        url: "http://localhost:8080/api/v1/items/" + id,
+        type: "DELETE",
+        success: (res) => {
+            Swal.fire({
+                icon: "success"
+            });
+        },
+        error: (res) => {
+            console.error(res);
+            Swal.fire({
+                title: JSON.stringify(res),
+                icon: "error"
+            });
+        }
+    });
+
+    $('#itemReset').click();
+
+    setTimeout(() => {
+        initialize();
+    },1000)
+
+})
+$('#itemReset').on('click', () => {
+    initialize()
+})
+
 
 
 function validate(value, field_name, pattern = null) {

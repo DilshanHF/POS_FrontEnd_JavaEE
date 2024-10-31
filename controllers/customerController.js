@@ -1,4 +1,4 @@
-import {CustomerModel} from "/model/customerModel.js";
+import {CustomerModel} from "../model/customerModel.js";
 
 
 
@@ -185,16 +185,7 @@ $('#customer_delete').on('click', () => {
           }
       })
 
-
-
-
-
-
   }
-
-
-
-
 })
 
 
